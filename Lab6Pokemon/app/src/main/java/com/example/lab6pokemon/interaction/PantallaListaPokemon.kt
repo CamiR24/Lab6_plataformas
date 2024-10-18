@@ -126,10 +126,10 @@ fun ListaPokemon(navController: NavHostController, innerPadding: PaddingValues){
             LazyColumn (horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Top) {
                 item {
-                    PokemonEspecificado(navController)
-                    PokemonEspecificado(navController)
-                    PokemonEspecificado(navController)
-                    PokemonEspecificado(navController)
+                    PokemonEspecificado("nombre", 1, navController)
+                    PokemonEspecificado("nombre", 1, navController)
+                    PokemonEspecificado("nombre", 1, navController)
+                    PokemonEspecificado("nombre", 1, navController)
                 }
             }
         }
@@ -137,7 +137,11 @@ fun ListaPokemon(navController: NavHostController, innerPadding: PaddingValues){
 }
 
 @Composable
-fun PokemonEspecificado(navController: NavHostController) {
+fun PokemonEspecificado(
+    name: String,
+    id: Int,
+    navController: NavHostController
+) {
     Card(
         modifier = Modifier
             .padding(10.dp)
@@ -148,57 +152,29 @@ fun PokemonEspecificado(navController: NavHostController) {
             containerColor = Color.White,
         )
     ) {
-        Column {
-            Box(
+        Row (
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth()
+                .background(Color(0xFFECCCE2)),
+            verticalAlignment = Alignment.Bottom,
+        ) {
+            Text(
+                text = name,
+                color = Color(0xFFBB4491),
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
+                modifier = Modifier.padding(vertical = 10.dp, horizontal = 10.dp)
+            )
+            /*Image(
+                painter = painterResource(R.drawable.like),
+                contentDescription = "Like",
                 modifier = Modifier
-                    .height(150.dp)
-                    .fillMaxWidth()
-            ) {
-                /*Image(
-                    painter = painterResource(R.drawable.leah),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .fillMaxSize()
-                        .clipToBounds()
-                )*/
-            }
-            Row (
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth()
-                    .background(Color(0xFFECCCE2)),
-                verticalAlignment = Alignment.Bottom,
-            ) {
-                Text(
-                    text = "Nombre",
-                    color = Color(0xFFBB4491),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
-                    modifier = Modifier.padding(vertical = 10.dp, horizontal = 10.dp)
-                )
-                Text(
-                    text = "Atributo",
-                    color = Color(0xFFBB4491),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
-                    modifier = Modifier.padding(vertical = 10.dp)
-                )
-                Box(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    /*Image(
-                        painter = painterResource(R.drawable.like),
-                        contentDescription = "Like",
-                        modifier = Modifier
-                            .padding(vertical = 5.dp, horizontal = 10.dp)
-                            .align(Alignment.CenterEnd)
-                            .clickable { navController.navigate("Match") }
+                    .padding(vertical = 5.dp, horizontal = 10.dp)
+                    .align(Alignment.CenterEnd)
+                    .clickable { navController.navigate("Match") }
 
-                    )*/
-                }
-            }
+            )*/
         }
     }
 }
