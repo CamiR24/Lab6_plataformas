@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.Card
@@ -34,6 +35,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -51,6 +56,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.lab6pokemon.R
 import com.example.lab6pokemon.ui.theme.Lab6PokemonTheme
+import com.uvg.lab6pokemon.network.Pokemon
+import com.uvg.lab6pokemon.network.RetrofitClient
+import kotlinx.coroutines.launch
 
 class PantallaListaPokemon : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -104,33 +112,30 @@ fun CenterAlignedTopAppBarLista(navController: NavHostController, innerPadding: 
 
 @Composable
 fun ListaPokemon(navController: NavHostController, innerPadding: PaddingValues){
+    val pokemonList = remember { mutableStateOf<List<Pokemon>>(emptyList()) }
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
+            val response = RetrofitClient.apiService.getPokemonList(100)
+            pokemonList.value = response.results
+        }
+    }
+
     Surface(
         modifier = Modifier
             .padding(innerPadding)
             .fillMaxSize(),
-        color = Color(0xFFECCCE2)
+        color = Color(0xFFFFFFFF)
     ){
-        Column (
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            Text(
-                text = "Para Ti",
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(10.dp),
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFFBB4491),
-            )
-            LazyColumn (horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Top) {
-                item {
-                    PokemonEspecificado("nombre", 1, navController)
-                    PokemonEspecificado("nombre", 1, navController)
-                    PokemonEspecificado("nombre", 1, navController)
-                    PokemonEspecificado("nombre", 1, navController)
-                }
+        LazyColumn (horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top) {
+            items (items = pokemonList, key = {pokemon:Pokemon -> pokemon.id}) { pokemon:Pokemon ->
+                PokemonEspecificado("nombre", 1, navController)
+                PokemonEspecificado("nombre", 1, navController)
+                PokemonEspecificado("nombre", 1, navController)
+                PokemonEspecificado("nombre", 1, navController)
+
             }
         }
     }
