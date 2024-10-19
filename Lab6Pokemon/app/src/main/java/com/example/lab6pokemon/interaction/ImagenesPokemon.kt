@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -17,6 +18,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
@@ -56,21 +60,21 @@ import com.uvg.lab6pokemon.network.RetrofitClient
 import kotlinx.coroutines.launch
 import coil.compose.AsyncImage
 
-class PantallaListaPokemon : ComponentActivity() {
+class ImagenesPokemon : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             Lab6PokemonTheme {
-                    CenterAlignedTopAppBarLista(navController = rememberNavController(), innerPadding = PaddingValues())
-                }
+                CenterAlignedTopAppBarLista(navController = rememberNavController(), innerPadding = PaddingValues())
             }
         }
     }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CenterAlignedTopAppBarLista(navController: NavHostController, innerPadding: PaddingValues) {
+fun CenterAlignedTopAppBarImagen(navController: NavHostController, innerPadding: PaddingValues) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     Scaffold(
@@ -102,12 +106,12 @@ fun CenterAlignedTopAppBarLista(navController: NavHostController, innerPadding: 
             )
         },
     ) { innerPadding ->
-        ListaPokemon(navController, innerPadding)
+        CardsPokemon(navController, innerPadding)
     }
 }
 
 @Composable
-fun ListaPokemon(navController: NavHostController, innerPadding: PaddingValues){
+fun CardsPokemon(navController: NavHostController, innerPadding: PaddingValues){
     val pokemonList = remember { mutableStateOf<List<Pokemon>>(emptyList()) }
     val coroutineScope = rememberCoroutineScope()
 
@@ -118,35 +122,34 @@ fun ListaPokemon(navController: NavHostController, innerPadding: PaddingValues){
         }
     }
 
-    LazyColumn (horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top) {
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(minSize = 128.dp)
+    ) {
         items (items = pokemonList.value, key = {pokemon:Pokemon -> pokemon.id}) { pokemon:Pokemon ->
-            PokemonEspecificado(pokemon, navController)
+            Front(pokemon)
+            Back(pokemon)
+            ShinyFront(pokemon)
+            ShinyBack(pokemon)
         }
     }
 }
 
 @Composable
-fun PokemonEspecificado(
-    pokemon: Pokemon,
-    navController: NavHostController
-) {
+fun Front(pokemon: Pokemon) {
     Card(
         modifier = Modifier
             .padding(10.dp)
             .height(80.dp)
-            .width(400.dp)
-            .clickable { "PantallaImagenPokemon"  },
+            .width(200.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.White,
         )
     ) {
-        Row (
+        Column(
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth()
-                .background(Color(0xFF1BC1DE)),
-            verticalAlignment = Alignment.Bottom,
+                .background(Color(0xFF1BC1DE))
         ) {
             AsyncImage(
                 model = pokemon.imageURLFront,
@@ -155,9 +158,8 @@ fun PokemonEspecificado(
                     .padding(vertical = 5.dp, horizontal = 10.dp)
                     .size(64.dp)
             )
-
             Text(
-                text = pokemon.name,
+                text = "FRONT",
                 color = Color(0xFF006E81),
                 fontWeight = FontWeight.Bold,
                 fontSize = 30.sp,
@@ -167,10 +169,118 @@ fun PokemonEspecificado(
     }
 }
 
-@Preview(showBackground = true)
+
 @Composable
-fun Greeting1Preview() {
-    Lab6PokemonTheme {
-        CenterAlignedTopAppBarLista(navController = rememberNavController(), innerPadding = PaddingValues())
+fun Back(
+    pokemon: Pokemon
+) {
+    Card(
+        modifier = Modifier
+            .padding(10.dp)
+            .height(80.dp)
+            .width(200.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White,
+        )
+    ) {
+        Column( modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth()
+            .background(Color(0xFF1BC1DE))
+        ){
+            AsyncImage(
+                model = pokemon.imageURLBack,
+                contentDescription = "Imagen del Pokemon",
+                modifier = Modifier
+                    .padding(vertical = 5.dp, horizontal = 10.dp)
+                    .size(64.dp)
+            )
+            Text(
+                text = "BACK",
+                color = Color(0xFF006E81),
+                fontWeight = FontWeight.Bold,
+                fontSize = 30.sp,
+                modifier = Modifier.padding(vertical = 20.dp, horizontal = 10.dp))
+        }
     }
 }
+
+@Composable
+fun ShinyFront(
+    pokemon: Pokemon
+) {
+    Card(
+        modifier = Modifier
+            .padding(10.dp)
+            .height(80.dp)
+            .width(200.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White,
+        )
+    ) {
+        Column( modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth()
+            .background(Color(0xFF1BC1DE))
+        ){
+            AsyncImage(
+                model = pokemon.imageURLShinyFront,
+                contentDescription = "Imagen del Pokemon",
+                modifier = Modifier
+                    .padding(vertical = 5.dp, horizontal = 10.dp)
+                    .size(64.dp)
+            )
+            Text(
+                text = "SHINY FRONT",
+                color = Color(0xFF006E81),
+                fontWeight = FontWeight.Bold,
+                fontSize = 30.sp,
+                modifier = Modifier.padding(vertical = 20.dp, horizontal = 10.dp))
+        }
+    }
+}
+
+@Composable
+fun ShinyBack(
+    pokemon: Pokemon
+) {
+    Card(
+        modifier = Modifier
+            .padding(10.dp)
+            .height(80.dp)
+            .width(200.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White,
+        )
+    ) {
+        Column( modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth()
+            .background(Color(0xFF1BC1DE))){
+
+            AsyncImage(
+                model = pokemon.imageURLShinyBack,
+                contentDescription = "Imagen del Pokemon",
+                modifier = Modifier
+                    .padding(vertical = 5.dp, horizontal = 10.dp)
+                    .size(64.dp)
+            )
+
+            Text(
+                text = "SHINY BACK",
+                color = Color(0xFF006E81),
+                fontWeight = FontWeight.Bold,
+                fontSize = 30.sp,
+                modifier = Modifier.padding(vertical = 20.dp, horizontal = 10.dp))
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun Greeting2Preview() {
+    Lab6PokemonTheme {
+        CenterAlignedTopAppBarImagen(navController = rememberNavController(), innerPadding = PaddingValues())
+    }
+}
+
