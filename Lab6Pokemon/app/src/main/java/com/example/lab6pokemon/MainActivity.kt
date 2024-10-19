@@ -29,6 +29,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.lab6pokemon.interaction.CenterAlignedTopAppBarImagenes
 import com.example.lab6pokemon.interaction.CenterAlignedTopAppBarLista
 import com.example.lab6pokemon.ui.theme.Lab6PokemonTheme
 
@@ -52,7 +53,7 @@ fun App(
     // Get current back stack entry
     val backStackEntry by navController.currentBackStackEntryAsState()
     // Get the name of the current screen
-    val currentScreen = backStackEntry?.destination?.route ?: "screen1"
+    val currentScreen = backStackEntry?.destination?.route ?: "Lista"
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -69,6 +70,7 @@ fun App(
             }
 
             composable(route = "Especificaciones") {
+                CenterAlignedTopAppBarImagenes(navController, innerPadding)
             }
         }
     }

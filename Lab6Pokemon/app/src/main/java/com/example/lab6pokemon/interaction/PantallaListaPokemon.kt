@@ -1,16 +1,12 @@
 package com.example.lab6pokemon.interaction
 
-import android.graphics.Bitmap
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -38,18 +34,13 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -127,17 +118,10 @@ fun ListaPokemon(navController: NavHostController, innerPadding: PaddingValues){
         }
     }
 
-    Surface(
-        modifier = Modifier
-            .padding(innerPadding)
-            .fillMaxSize(),
-        color = Color(0xFFFFFFFF)
-    ){
-        LazyColumn (horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Top) {
-            items (items = pokemonList.value, key = {pokemon:Pokemon -> pokemon.id}) { pokemon:Pokemon ->
-                PokemonEspecificado(pokemon, navController)
-            }
+    LazyColumn (horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top) {
+        items (items = pokemonList.value, key = {pokemon:Pokemon -> pokemon.id}) { pokemon:Pokemon ->
+            PokemonEspecificado(pokemon, navController)
         }
     }
 }
@@ -152,7 +136,7 @@ fun PokemonEspecificado(
             .padding(10.dp)
             .height(80.dp)
             .width(400.dp)
-            .clickable {  },
+            .clickable { navController.navigate("Especificaciones")  },
         colors = CardDefaults.cardColors(
             containerColor = Color.White,
         )
@@ -161,7 +145,7 @@ fun PokemonEspecificado(
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth()
-                .background(Color(0xFFECCCE2)),
+                .background(Color(0xFF1BC1DE)),
             verticalAlignment = Alignment.Bottom,
         ) {
             AsyncImage(
@@ -174,20 +158,11 @@ fun PokemonEspecificado(
 
             Text(
                 text = pokemon.name,
-                color = Color(0xFFBB4491),
+                color = Color(0xFF006E81),
                 fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
-                modifier = Modifier.padding(vertical = 10.dp, horizontal = 10.dp)
+                fontSize = 30.sp,
+                modifier = Modifier.padding(vertical = 20.dp, horizontal = 10.dp)
             )
-            /*Image(
-                painter = painterResource(R.drawable.like),
-                contentDescription = "Like",
-                modifier = Modifier
-                    .padding(vertical = 5.dp, horizontal = 10.dp)
-                    .align(Alignment.CenterEnd)
-                    .clickable { navController.navigate("Match") }
-
-            )*/
         }
     }
 }
