@@ -1,5 +1,6 @@
 package com.example.lab6pokemon.interaction
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -36,9 +38,11 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -59,6 +63,7 @@ import com.example.lab6pokemon.ui.theme.Lab6PokemonTheme
 import com.uvg.lab6pokemon.network.Pokemon
 import com.uvg.lab6pokemon.network.RetrofitClient
 import kotlinx.coroutines.launch
+import coil.compose.AsyncImage
 
 class PantallaListaPokemon : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -130,12 +135,8 @@ fun ListaPokemon(navController: NavHostController, innerPadding: PaddingValues){
     ){
         LazyColumn (horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Top) {
-            items (items = pokemonList, key = {pokemon:Pokemon -> pokemon.id}) { pokemon:Pokemon ->
-                PokemonEspecificado("nombre", 1, navController)
-                PokemonEspecificado("nombre", 1, navController)
-                PokemonEspecificado("nombre", 1, navController)
-                PokemonEspecificado("nombre", 1, navController)
-
+            items (items = pokemonList.value, key = {pokemon:Pokemon -> pokemon.id}) { pokemon:Pokemon ->
+                PokemonEspecificado(pokemon, navController)
             }
         }
     }
@@ -143,8 +144,7 @@ fun ListaPokemon(navController: NavHostController, innerPadding: PaddingValues){
 
 @Composable
 fun PokemonEspecificado(
-    name: String,
-    id: Int,
+    pokemon: Pokemon,
     navController: NavHostController
 ) {
     Card(
@@ -164,8 +164,16 @@ fun PokemonEspecificado(
                 .background(Color(0xFFECCCE2)),
             verticalAlignment = Alignment.Bottom,
         ) {
+            AsyncImage(
+                model = pokemon.imageURLFront,
+                contentDescription = "Imagen del Pokemon",
+                modifier = Modifier
+                    .padding(vertical = 5.dp, horizontal = 10.dp)
+                    .size(64.dp)
+            )
+
             Text(
-                text = name,
+                text = pokemon.name,
                 color = Color(0xFFBB4491),
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
