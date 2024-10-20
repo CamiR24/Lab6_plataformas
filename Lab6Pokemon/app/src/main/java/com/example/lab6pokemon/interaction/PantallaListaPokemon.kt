@@ -1,6 +1,7 @@
 package com.example.lab6pokemon.interaction
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -114,6 +115,7 @@ fun ListaPokemon(navController: NavHostController, innerPadding: PaddingValues){
     LaunchedEffect(Unit) {
         coroutineScope.launch {
             val response = RetrofitClient.apiService.getPokemonList(100)
+            Log.d("Pokemon API Response", response.results.toString()) // Log para verificar los datos recibidos
             pokemonList.value = response.results
         }
     }
@@ -136,7 +138,9 @@ fun PokemonEspecificado(
             .padding(10.dp)
             .height(80.dp)
             .width(400.dp)
-            .clickable { "PantallaImagenPokemon"  },
+            .clickable {
+                navController.navigate("pantallaImagenPokemon/${pokemon.id}")
+            },
         colors = CardDefaults.cardColors(
             containerColor = Color.White,
         )

@@ -1,6 +1,7 @@
 package com.example.lab6pokemon
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -69,9 +70,21 @@ fun App(
                 }
             }
 
-            composable(route = "PantallaImagenPokemon") {
-                CenterAlignedTopAppBarImagen(navController, innerPadding)
+            composable(route = "PantallaImagenPokemon/{pokemonId}") { backStackEntry ->
+                val arguments = backStackEntry.arguments
+                Log.d("Navigation", "Arguments received: $arguments")
+
+                val pokemonId = arguments?.getString("pokemonId")?.toIntOrNull()
+
+                Log.d("Navigation Recibido", "ID received: $pokemonId")
+
+                if (pokemonId != null) {
+                    CenterAlignedTopAppBarImagen(navController, innerPadding, pokemonId)
+                } else {
+                    Log.e("Navigation", "Pokemon ID is null or invalid")
+                }
             }
+
         }
     }
 }
