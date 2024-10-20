@@ -78,10 +78,26 @@ class ImagenesPokemon : ComponentActivity() {
 @Composable
 fun CenterAlignedTopAppBarImagen(navController: NavHostController, innerPadding: PaddingValues, id: Int) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+    val pokemon = remember { mutableStateOf<Pokemon?>(null) }
+    val coroutineScope = rememberCoroutineScope()
+
+    // Llamada a la API para obtener el Pokémon
+    LaunchedEffect(id) {
+        coroutineScope.launch {
+            try {
+                val response = RetrofitClient.apiService.getPokemonById(id)
+                pokemon.value = response
+            } catch (e: Exception) {
+                Log.e("CenterAlignedTopAppBarImagen", "Error fetching Pokémon", e)
+            }
+        }
+    }
+
+    // Título predeterminado o el nombre del Pokémon
+    val title = pokemon.value?.name?.capitalize() ?: "Cargando..."
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -91,7 +107,7 @@ fun CenterAlignedTopAppBarImagen(navController: NavHostController, innerPadding:
                 ),
                 title = {
                     Text(
-                        text = "POKEMON IMAGENES",
+                        text = title,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -113,60 +129,40 @@ fun CenterAlignedTopAppBarImagen(navController: NavHostController, innerPadding:
     }
 }
 
+
 @Composable
 fun CardsPokemon(navController: NavHostController, innerPadding: PaddingValues, id: Int) {
-    val pokemon = remember { mutableStateOf<Pokemon?>(null) }
-    val coroutineScope = rememberCoroutineScope()
-
-    Log.d("ID de Pokemon", "El ID del Pokemon es: " + id)
-
-    LaunchedEffect(id) {
-        coroutineScope.launch {
-            try {
-                val response = RetrofitClient.apiService.getPokemonById(id)
-                pokemon.value = response
-            } catch (e: Exception) {
-                Log.e("CardsPokemon", "Error fetching Pokémon", e)
-            }
+    Column(modifier = Modifier.padding(innerPadding)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            PokemonImageCard(
+                imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png",
+                labelText = "FRONT"
+            )
+            PokemonImageCard(
+                imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/$id.png",
+                labelText = "BACK"
+            )
         }
-    }
 
-    Log.d("Pokemon Obtenido", "El Pokemon es: " + pokemon)
-
-    pokemon.value?.let { pokemonData ->
-        Column(modifier = Modifier.padding(innerPadding)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                PokemonImageCard(
-                    imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png",
-                    labelText = "FRONT"
-                )
-                PokemonImageCard(
-                    imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/$id.png",
-                    labelText = "BACK"
-                )
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                PokemonImageCard(
-                    imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/$id.png",
-                    labelText = "SHINY FRONT"
-                )
-                PokemonImageCard(
-                    imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/shiny/$id.png",
-                    labelText = "SHINY BACK"
-                )
-            }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            PokemonImageCard(
+                imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/$id.png",
+                labelText = "SHINY FRONT"
+            )
+            PokemonImageCard(
+                imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/shiny/$id.png",
+                labelText = "SHINY BACK"
+            )
         }
-    } ?: run {
-        CircularProgressIndicator(modifier = Modifier.padding(16.dp))
     }
 }
+
 
 @Composable
 fun PokemonImageCard(
